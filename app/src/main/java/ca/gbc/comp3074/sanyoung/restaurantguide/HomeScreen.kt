@@ -213,7 +213,7 @@ fun HomeScreen(
 
                 TextButton(onClick = onSeeAll) {
                     Text(
-                        text = "See all",
+                        text = "Bookmarks",
                         fontSize = 12.sp,
                         color = Color.Gray
                     )
