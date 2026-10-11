@@ -27,7 +27,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun RestaurantGuideApp() {
     var screen by remember { mutableStateOf("Splash") }
-
     val context = LocalContext.current
 
     // Show Splash for 2 seconds, then open Home.
@@ -39,6 +38,27 @@ fun RestaurantGuideApp() {
     // Prevent Back from closing the app during Splash.
     BackHandler(enabled = screen == "Splash") {
         // Wait until Home appears.
+    }
+
+    // ADDED: Return to Home when pressing Back on About.
+    BackHandler(enabled = screen == "About") {
+        screen = "Home"
+    }
+
+    // ADDED: Navigation for About screen.
+    val aboutNavigate: (String) -> Unit = { destination ->
+        when (destination) {
+            "Home" -> screen = "Home"
+            "About" -> screen = "About"
+            "List", "Saved" -> screen = "List"
+            else -> {
+                Toast.makeText(
+                    context,
+                    "$destination screen will be connected later.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
     when (screen) {
@@ -66,7 +86,9 @@ fun RestaurantGuideApp() {
                     ).show()
                 },
                 onNavigate = { destination ->
-                    if (destination != "Home") {
+                    if (destination == "About") {
+                        screen = "About"
+                    } else if (destination != "Home") {
                         Toast.makeText(
                             context,
                             "$destination screen will be connected later.",
@@ -97,12 +119,25 @@ fun RestaurantGuideApp() {
                     ).show()
                 },
                 onNavigate = { destination ->
-                    Toast.makeText(
-                        context,
-                        "$destination screen will be connected later.",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    if (destination == "About") {
+                        screen = "About"
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "$destination screen will be connected later.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
+            )
+        }
+
+        // ADDED: Your About screen.
+        // AboutScreen already has the navigation bar,
+        // so we do not create another one here.
+        "About" -> {
+            AboutScreen(
+                onNavigate = aboutNavigate
             )
         }
     }
