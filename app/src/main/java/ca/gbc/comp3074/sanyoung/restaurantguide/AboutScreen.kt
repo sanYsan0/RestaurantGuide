@@ -33,7 +33,6 @@ fun AboutScreen(onNavigate: (String) -> Unit) {
     Scaffold(
         containerColor = Color.White,
 
-        // Same bottom navigation style as HomeScreen
         bottomBar = {
             Surface(color = Color.White) {
                 Row(
@@ -82,7 +81,6 @@ fun AboutScreen(onNavigate: (String) -> Unit) {
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Existing logo from Sanyoung's drawable folder
             Image(
                 painter = painterResource(
                     R.drawable.restaurant_logo
@@ -117,7 +115,6 @@ fun AboutScreen(onNavigate: (String) -> Unit) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Version information
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

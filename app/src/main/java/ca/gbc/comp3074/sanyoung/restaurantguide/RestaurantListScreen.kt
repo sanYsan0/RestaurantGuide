@@ -1,3 +1,4 @@
+
 package ca.gbc.comp3074.sanyoung.restaurantguide
 
 import androidx.activity.compose.BackHandler
@@ -164,24 +165,35 @@ fun RestaurantListScreen(
 
             Spacer(modifier = Modifier.height(6.dp))
 
-            val showPiano = matchesListSearch(
-                "Piano Piano", "Italian · Pasta", search, category
-            )
-            val showCoffee = matchesListSearch(
-                "Fahrenheit Coffee", "Cafe · Coffee", search, category
-            )
-            val showNorthernThai = matchesListSearch(
-                "Pai Northern Thai", "Thai · Curry", search, category
-            )
-            val showImanishi = matchesListSearch(
-                "Imanishi", "Japanese · Ramen", search, category
-            )
-            val showPai = matchesListSearch(
-                "Pai", "Thai · Noodles", search, category
-            )
-            val showSansotei = matchesListSearch(
-                "Sansotei Ramen", "Japanese · Ramen", search, category
-            )
+            val showPiano = SavedRestaurants.isSaved("Piano Piano") &&
+                    matchesListSearch(
+                        "Piano Piano", "Italian · Pasta", search, category
+                    )
+
+            val showCoffee = SavedRestaurants.isSaved("Fahrenheit Coffee") &&
+                    matchesListSearch(
+                        "Fahrenheit Coffee", "Cafe · Coffee", search, category
+                    )
+
+            val showNorthernThai = SavedRestaurants.isSaved("Pai Northern Thai") &&
+                    matchesListSearch(
+                        "Pai Northern Thai", "Thai · Curry", search, category
+                    )
+
+            val showImanishi = SavedRestaurants.isSaved("Imanishi") &&
+                    matchesListSearch(
+                        "Imanishi", "Japanese · Ramen", search, category
+                    )
+
+            val showPai = SavedRestaurants.isSaved("Pai") &&
+                    matchesListSearch(
+                        "Pai", "Thai · Noodles", search, category
+                    )
+
+            val showSansotei = SavedRestaurants.isSaved("Sansotei Ramen") &&
+                    matchesListSearch(
+                        "Sansotei Ramen", "Japanese · Ramen", search, category
+                    )
 
             if (showPiano) {
                 RestaurantCard(
@@ -258,7 +270,11 @@ fun RestaurantListScreen(
                 !showSansotei
             ) {
                 Text(
-                    text = "No restaurants found.",
+                    text = if (SavedRestaurants.restaurants.values.none { it }) {
+                        "No saved restaurants yet. Bookmark a restaurant on Home."
+                    } else {
+                        "No saved restaurants match your search."
+                    },
                     color = Color.Gray
                 )
             }

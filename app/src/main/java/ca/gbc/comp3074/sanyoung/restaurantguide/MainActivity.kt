@@ -1,3 +1,4 @@
+
 package ca.gbc.comp3074.sanyoung.restaurantguide
 
 import android.os.Bundle
@@ -27,6 +28,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun RestaurantGuideApp() {
     var screen by remember { mutableStateOf("Splash") }
+    var selectedRestaurant by remember { mutableStateOf("Piano Piano") }
+    var previousScreen by remember { mutableStateOf("Home") }
+
     val context = LocalContext.current
 
     // Show Splash for 2 seconds, then open Home.
@@ -40,17 +44,21 @@ fun RestaurantGuideApp() {
         // Wait until Home appears.
     }
 
-    // ADDED: Return to Home when pressing Back on About.
-    BackHandler(enabled = screen == "About") {
+    BackHandler(enabled = screen == "About" || screen == "Add") {
         screen = "Home"
     }
 
-    // ADDED: Navigation for About screen.
-    val aboutNavigate: (String) -> Unit = { destination ->
+    BackHandler(enabled = screen == "Details") {
+        screen = previousScreen
+    }
+
+    val navigate: (String) -> Unit = { destination ->
         when (destination) {
             "Home" -> screen = "Home"
+            "Saved", "List" -> screen = "List"
             "About" -> screen = "About"
-            "List", "Saved" -> screen = "List"
+            "Add", "+" -> screen = "Add"
+
             else -> {
                 Toast.makeText(
                     context,
@@ -58,6 +66,14 @@ fun RestaurantGuideApp() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
+        }
+    }
+
+    val openRestaurant: (String) -> Unit = { name ->
+        if (!DeletedRestaurants.isDeleted(name)) {
+            selectedRestaurant = name
+            previousScreen = screen
+            screen = "Details"
         }
     }
 
@@ -72,29 +88,13 @@ fun RestaurantGuideApp() {
                     screen = "List"
                 },
                 onAdd = {
-                    Toast.makeText(
-                        context,
-                        "Add screen will be connected later.",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    screen = "Add"
                 },
                 onRestaurantClick = { name ->
-                    Toast.makeText(
-                        context,
-                        "Open details: $name",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    openRestaurant(name)
                 },
                 onNavigate = { destination ->
-                    if (destination == "About") {
-                        screen = "About"
-                    } else if (destination != "Home") {
-                        Toast.makeText(
-                            context,
-                            "$destination screen will be connected later.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                    navigate(destination)
                 }
             )
         }
@@ -105,39 +105,52 @@ fun RestaurantGuideApp() {
                     screen = "Home"
                 },
                 onAdd = {
-                    Toast.makeText(
-                        context,
-                        "Add screen will be connected later.",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    screen = "Add"
                 },
                 onRestaurantClick = { name ->
-                    Toast.makeText(
-                        context,
-                        "Open details: $name",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    openRestaurant(name)
                 },
                 onNavigate = { destination ->
-                    if (destination == "About") {
-                        screen = "About"
-                    } else {
-                        Toast.makeText(
-                            context,
-                            "$destination screen will be connected later.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                    navigate(destination)
                 }
             )
         }
 
-        // ADDED: Your About screen.
-        // AboutScreen already has the navigation bar,
-        // so we do not create another one here.
         "About" -> {
             AboutScreen(
-                onNavigate = aboutNavigate
+                onNavigate = navigate
+            )
+        }
+
+        "Details" -> {
+            RestaurantDetailScreen(
+                restaurantName = selectedRestaurant,
+                onNavigate = navigate,
+                onDelete = {
+                    screen = "Home"
+                    Toast.makeText(
+                        context,
+                        "$selectedRestaurant deleted",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            )
+        }
+
+        "Add" -> {
+            AddRestaurantScreen(
+                onNavigate = navigate,
+                onSave = { restaurant ->
+                    AddedRestaurants.restaurants.add(restaurant)
+
+                    Toast.makeText(
+                        context,
+                        "${restaurant.name} saved in this session",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    screen = "Home"
+                }
             )
         }
     }
