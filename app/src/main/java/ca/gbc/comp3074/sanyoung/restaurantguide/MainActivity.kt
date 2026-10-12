@@ -44,7 +44,11 @@ fun RestaurantGuideApp() {
         // Wait until Home appears.
     }
 
-    BackHandler(enabled = screen == "About" || screen == "Add") {
+    BackHandler(
+        enabled = screen == "About" ||
+                screen == "Add" ||
+                screen == "Map"
+    ) {
         screen = "Home"
     }
 
@@ -57,6 +61,7 @@ fun RestaurantGuideApp() {
             "Home" -> screen = "Home"
             "Saved", "List" -> screen = "List"
             "About" -> screen = "About"
+            "Map" -> screen = "Map"
             "Add", "+" -> screen = "Add"
 
             else -> {
@@ -78,6 +83,7 @@ fun RestaurantGuideApp() {
     }
 
     when (screen) {
+
         "Splash" -> {
             SplashScreen()
         }
@@ -116,6 +122,18 @@ fun RestaurantGuideApp() {
             )
         }
 
+        "Map" -> {
+            MapScreen(
+                onBack = {
+                    screen = "Home"
+                },
+                onAddClick = {
+                    screen = "Add"
+                },
+                onNavigate = navigate
+            )
+        }
+
         "About" -> {
             AboutScreen(
                 onNavigate = navigate
@@ -128,6 +146,7 @@ fun RestaurantGuideApp() {
                 onNavigate = navigate,
                 onDelete = {
                     screen = "Home"
+
                     Toast.makeText(
                         context,
                         "$selectedRestaurant deleted",
