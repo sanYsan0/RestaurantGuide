@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -11,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "ca.gbc.comp3074.sanyoung.restaurantguide"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
@@ -51,4 +52,13 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+    implementation("com.google.maps.android:maps-compose:6.1.0")
+    implementation("com.google.android.gms:play-services-maps:19.0.0")
+    implementation("io.coil-kt:coil-compose:2.7.0")
+    implementation("androidx.compose.material:material-icons-extended:1.7.0")
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
 }
